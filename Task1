@@ -1,0 +1,38 @@
+Project: System Utility Dashboard
+Objective: Create a node application that provides system information.
+
+const os = require('os');
+const fs = require('fs');
+const path = require('path');
+
+function getSystemInfo() {
+  return {
+    osType: os.type(),
+    totalMemory: `${(os.totalmem() / (1024 ** 3)).toFixed(2)} GB`,
+    freeMemory: `${(os.freemem() / (1024 ** 3)).toFixed(2)} GB`,
+    cpuDetails: os.cpus()
+  };
+}
+
+function saveSystemInfoToFile(info) {
+  const logDir = path.join(__dirname, 'logs');
+  const logFilePath = path.join(logDir, 'system-info.txt');
+
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+
+  const logData = `System Information:
+OS Type: ${info.osType}
+Total Memory: ${info.totalMemory}
+Free Memory: ${info.freeMemory}
+CPU Details: ${JSON.stringify(info.cpuDetails, null, 2)}
+`;
+
+  fs.writeFileSync(logFilePath, logData, 'utf-8');
+  console.log(`System information saved to ${logFilePath}`);
+}
+
+const systemInfo = getSystemInfo();
+console.log('System Information:', systemInfo);
+saveSystemInfoToFile(systemInfo);
